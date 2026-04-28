@@ -1,12 +1,10 @@
 import pandas as pd
 import numpy as np
 from scipy import stats
-from statsmodels.tsa.stattools import adfuller
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 HH_PATH   = "cleaned/household_inflation_dataset.csv"
-MM23_PATH = "cleaned/mm23_key_categories_yoy.csv"
 ANALYSIS_RATE_COL = "annual_inflation_rate"
 ANALYSIS_GAP_COL = "annual_gap_vs_headline"
 
@@ -138,73 +136,6 @@ tenure_yearly = (
 )[TENURE_TYPES]
 
 
-# ADF on monthly MM23 -- the 2022-23 spike acts as a structural break which
-# can make stationary series appear non-stationary
-print("\nAugmented Dickey-Fuller stationarity test (monthly MM23, n=253):")
-print("H0: series has a unit root (non-stationary)\n")
-
-mm23 = pd.read_csv(MM23_PATH)
-mm23["month"] = pd.to_datetime(mm23["month"], errors="coerce")
-mm23 = mm23.sort_values("month").dropna(subset=["month"])
-
-adf_series = {
-    "CPI all items (headline)": mm23["cpi_all_items_yoy_inflation"],
-    "Food":                     mm23["cat_food_yoy_inflation"],
-    "Housing":                  mm23["cat_housing_yoy_inflation"],
-    "Transport":                mm23["cat_transport_yoy_inflation"],
-}
-
-for label, series in adf_series.items():
-    s = series.dropna()
-    adf_stat, p_adf, lags, _, _, _ = adfuller(s, autolag="AIC")
-    result = "stationary" if p_adf < 0.05 else "non-stationary"
-    print(f"  {label:<30} ADF={adf_stat:.4f}  p={p_adf:.4f}  lags={lags}  -> {result}")
-
-print("\n  all series non-stationary -- likely driven by the 2022-23 structural break")
-
-
-# Levene's test -- checks whether variance differs across tenure groups
-print("\nLevene's test for equality of variance:")
-print("H0: inflation variance is equal across all tenure types\n")
-
-lev_stat, lev_p = stats.levene(*groups)
-print(f"  statistic={lev_stat:.4f}  p={lev_p:.4e}  {'variances differ' if lev_p < 0.05 else 'no significant difference'}")
-print("\n  std by tenure type:")
-for t, g in zip(TENURE_TYPES, groups):
-    print(f"    {t:<20} std={g.std():.4f}")
-
-
-# Mann-Whitney shock vs non-shock, rank-biserial as effect size
-print("\nShock period (2022-2023) vs non-shock years:")
-print("H0: mean household inflation is the same in both periods\n")
-
-shock    = df[df["inflation_year"].between(2022, 2023)][ANALYSIS_RATE_COL].dropna()
-no_shock = df[~df["inflation_year"].between(2022, 2023)][ANALYSIS_RATE_COL].dropna()
-
-u_stat, p_shock = stats.mannwhitneyu(shock, no_shock, alternative="two-sided")
-
-n1, n2 = len(shock), len(no_shock)
-rank_biserial = (2 * u_stat) / (n1 * n2) - 1
-
-if abs(rank_biserial) > 0.5:
-    rb_label = "large"
-elif abs(rank_biserial) > 0.3:
-    rb_label = "medium"
-else:
-    rb_label = "small"
-
-print(f"  shock    n={n1:>6,}  mean={shock.mean():.4f}%")
-print(f"  no shock n={n2:>6,}  mean={no_shock.mean():.4f}%")
-print(f"  Mann-Whitney U={u_stat:.0f}  p={p_shock:.4e}")
-print(f"  rank-biserial r = {rank_biserial:.4f}  ({rb_label} effect)")
-
-
-print("\nClass balance (households per tenure type):")
-counts = df["tenure_type"].value_counts()
-total  = counts.sum()
-for tenure, count in counts.items():
-    print(f"  {tenure:<20} n={count:>6,}  ({100*count/total:.1f}%)")
-
 
 SHARE_LABELS = {
     "share_01_food_non_alcoholic":  "Food",
@@ -321,32 +252,6 @@ ax.tick_params(axis="y", rotation=0)
 savefig("plot_03_heatmap_gap_vs_headline.png")
 
 
-# monthly CPI series - context for the ADF test
-fig, ax = plt.subplots(figsize=(9, 5))
-ax.plot(mm23["month"], mm23["cpi_all_items_yoy_inflation"], color="#1565C0", linewidth=1.5)
-ax.axvspan(pd.Timestamp("2021-06-01"), pd.Timestamp("2023-12-01"),
-           alpha=0.15, color="red", label="Shock period")
-ax.set_title("Monthly CPI Headline YoY Inflation (n=253, used for ADF)")
-ax.set_xlabel("Month")
-ax.set_ylabel("YoY Inflation (%)")
-ax.legend(fontsize=11)
-ax.grid(True, alpha=0.3)
-savefig("plot_04_monthly_cpi_adf.png")
-
-
-# shock vs non-shock distributions
-fig, ax = plt.subplots(figsize=(9, 5))
-ax.hist(no_shock, bins=60, alpha=0.6, color="#4CAF50",
-        label=f"Non-shock (n={len(no_shock):,})", density=True)
-ax.hist(shock, bins=60, alpha=0.6, color="#F44336",
-        label=f"Shock 2022-23 (n={len(shock):,})", density=True)
-ax.set_title(f"Shock vs Non-Shock Years (effect size r = {rank_biserial:.3f}, {rb_label} effect)")
-ax.set_xlabel("Household Inflation Rate (%)")
-ax.set_ylabel("Density")
-ax.legend(fontsize=11)
-ax.grid(True, alpha=0.3)
-savefig("plot_05_shock_vs_nonshock.png")
-
 
 # within-year Spearman bar chart
 fig, ax = plt.subplots(figsize=(10, 6))
@@ -376,33 +281,3 @@ ax.legend(fontsize=11)
 ax.grid(True, alpha=0.3, axis="y")
 savefig("plot_07_spending_shares_by_tenure.png")
 
-
-# housing share spread by tenure - supports Levene's result
-fig, ax = plt.subplots(figsize=(9, 5))
-housing_data = [df[df["tenure_type"]==t]["share_04_housing_fuel_power"].dropna().values
-                for t in TENURE_TYPES]
-bp = ax.boxplot(housing_data, patch_artist=True,
-                tick_labels=[LABELS[t] for t in TENURE_TYPES],
-                medianprops=dict(color="black", linewidth=2))
-for patch, col in zip(bp["boxes"], [tenure_colours[t] for t in TENURE_TYPES]):
-    patch.set_facecolor(col)
-    patch.set_alpha(0.7)
-ax.set_title("Household-Level Variation in Housing & Fuels Share")
-ax.set_ylabel("Share of Spending on Housing & Fuels")
-ax.set_xticklabels([LABELS[t] for t in TENURE_TYPES], rotation=0, ha="center")
-ax.grid(True, alpha=0.3, axis="y")
-savefig("plot_08_housing_share_variation.png")
-
-
-# spending share inter-correlations
-fig, ax = plt.subplots(figsize=(10, 8))
-share_corr = df[SHARE_COLS].corr(method="spearman")
-share_corr.index   = [SHARE_LABELS[c] for c in SHARE_COLS]
-share_corr.columns = [SHARE_LABELS[c] for c in SHARE_COLS]
-sns.heatmap(share_corr, annot=False, cmap="coolwarm", center=0,
-            ax=ax, linewidths=0.3, vmin=-1, vmax=1)
-ax.set_title("Spending Share Inter-correlations (Spearman)")
-ax.tick_params(axis="x", rotation=45, labelsize=11)
-ax.tick_params(axis="y", rotation=0, labelsize=11)
-ax.set_xticklabels(ax.get_xticklabels(), ha="right")
-savefig("plot_09_feature_correlations.png")
