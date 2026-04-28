@@ -1,17 +1,5 @@
-# ADS-Bankers
+# ADS-Bankers-Project
 
-## Files kept for marking
-
-The repository keeps the scripts, required input CSVs, 
-compact result CSVs, summary text files, and figures. 
-Large generated row-level outputs and fitted model binaries are
-excluded because they are reproducible from the scripts below.
-
-Required input files:
-```text
-Data/mm23.csv
-cleaned/lcf_expenditure_shares.csv
-```
 
 ## Run order
 
@@ -44,4 +32,47 @@ python Randomforestoutputs.py      # charts + importances regarding Random Fores
 
 python nn.py                       # nn_household_outputs_full/  (set use_top6=True for top 6)
 python nn_charts.py                # add --top6 to read top-6 dir
+```
+
+## Dashboard
+
+This project includes an interactive dashboard built using Streamlit and Matplotlib.
+
+### Installation
+
+To run the dashboard, install the required Python libraries:
+
+```bash
+pip install streamlit matplotlib pandas
+```
+
+or
+
+```bash
+conda install streamlit matplotlib pandas
+```
+
+### Running the Dashboard
+
+Once the dependencies are installed, run the following command inside the `dashboard` directory:
+
+```bash
+streamlit run Dashboard.py
+```
+
+The dashboard will automatically open in your default browser.
+
+# ADS-Bankers
+
+## Files kept for marking
+
+The repository keeps the scripts, required input CSVs, 
+compact result CSVs, summary text files, and figures. 
+Large generated row-level outputs and fitted model binaries are
+excluded because they are reproducible from the scripts below.
+
+Required input files:
+```text
+Data/mm23.csv
+cleaned/lcf_expenditure_shares.csv
 ```
