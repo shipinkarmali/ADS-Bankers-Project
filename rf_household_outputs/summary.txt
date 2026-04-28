@@ -1,0 +1,55 @@
+=== HOUSEHOLD RANDOM FOREST ===
+
+Performance on held-out years:
+rmse: 2.474374949877697
+mae: 2.002978630869445
+weighted_rmse: 2.5472690914889733
+weighted_mae: 2.0628508861003945
+r2: 0.0614735540078441
+train_n: 36480.0
+test_n: 8421.0
+inner_cv_neg_rmse: -1.0499079320679083
+
+Best parameters:
+n_estimators: 600
+min_samples_split: 2
+min_samples_leaf: 2
+max_features: sqrt
+max_depth: nan
+
+Top 15 permutation importance features:
+Miscellaneous Goods & Services Share: 0.114722
+Clothing Share: 0.077763
+Furnishings Share: 0.046317
+Alcohol & Tobacco Share: 0.033954
+Recreation & Culture Share: 0.021488
+Restaurants & Hotels Share: 0.021223
+Communication Share: 0.001195
+Actual Rent Share: 0.000667
+Income Quintile: 2.0: 0.000298
+HRP Age Band: Under 30: 0.000268
+HRP Age Band: 65 To 74: -0.000088
+HRP Age Band: 75 Plus: -0.000120
+HRP Age Band: 30 To 49: -0.000218
+Tenure: Social Rent: -0.000235
+Tenure: Private Rent: -0.000263
+
+Mean excess inflation by tenure type:
+private_rent: actual=2.139996, predicted=0.196628
+social_rent: actual=1.209077, predicted=-0.297452
+own_mortgage: actual=-0.762065, predicted=-0.074746
+own_outright: actual=-1.018703, predicted=0.300526
+
+Mean excess inflation by income quintile:
+1.0: actual=0.704669, predicted=-0.314275
+2.0: actual=0.070443, predicted=-0.232738
+3.0: actual=0.021140, predicted=0.106032
+4.0: actual=-0.445683, predicted=0.246036
+5.0: actual=-0.333614, predicted=0.457003
+
+Mean excess inflation by age band:
+under_30: actual=1.164828, predicted=0.231302
+30_to_49: actual=0.087348, predicted=0.142982
+50_to_64: actual=-0.075919, predicted=0.222393
+65_to_74: actual=-0.384597, predicted=-0.101711
+75_plus: actual=-0.384883, predicted=-0.447652

@@ -1,0 +1,30 @@
+Household Elastic Net
+
+train years: [2015, 2016, 2017, 2018, 2019, 2020, 2021]
+test years : [2022, 2023]
+train rows : 36480
+test rows  : 8421
+features   : 20
+
+Comparison: OLS vs Elastic Net (CV) vs Elastic Net (low alpha)
+               model       r2     rmse    alpha  l1_ratio  n_nonzero
+                 OLS 0.082302 2.446764 0.000000       NaN         20
+       ElasticNet_CV 0.084900 2.443299 0.215443      0.05         17
+ElasticNet_low_alpha 0.082136 2.446986 0.001000      0.50         19
+
+Top 15 OLS coefficients (standardised, by magnitude):
+  Transport Share: +0.682337
+  Food Share: -0.470096
+  Miscellaneous Goods & Services Share: -0.336251
+  Clothing Share: -0.336058
+  Alcohol & Tobacco Share: +0.270389
+  Education Share: +0.262839
+  Restaurants & Hotels Share: +0.212820
+  Furnishings Share: -0.208060
+  Recreation & Culture Share: -0.102592
+  Housing & Fuel Share: -0.088786
+  Communication Share: +0.053141
+  Health Share: +0.023188
+  Age: 65 To 74: -0.021367
+  Tenure: Private Rent: -0.015861
+  Age: 75 Plus: -0.013622

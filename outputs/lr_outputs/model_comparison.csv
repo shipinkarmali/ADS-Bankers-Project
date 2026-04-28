@@ -1,0 +1,3 @@
+model,train_r2,test_r2,test_mae
+Model 1 — demographics only (tenure + age + income),0.0507,-0.0533,2.066
+Model 2 — demographics + expenditure shares,0.5812,0.0823,1.9801

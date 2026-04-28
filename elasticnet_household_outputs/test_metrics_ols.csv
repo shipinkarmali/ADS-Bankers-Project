@@ -1,0 +1,2 @@
+rmse,r2,model,alpha,l1_ratio,n_nonzero_coefs,n_total_coefs
+2.4467638998594063,0.08230234373574263,OLS,0.0,,20,20

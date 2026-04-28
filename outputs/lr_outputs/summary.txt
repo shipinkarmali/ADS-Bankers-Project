@@ -1,0 +1,26 @@
+Household Linear Regression (WLS)
+
+train years: [2015, 2016, 2017, 2018, 2019, 2020, 2021]
+test years : [2022, 2023]
+
+Model comparison:
+                                              model  train_r2  test_r2  test_mae
+Model 1 — demographics only (tenure + age + income)    0.0507  -0.0533    2.0660
+        Model 2 — demographics + expenditure shares    0.5812   0.0823    1.9801
+
+Model 1 — demographics only
+tenure effects (vs own_outright):
+  own mortgage          -0.0176 pp  p=0.4646  ns
+  private rent          -0.0375 pp  p=0.1311  ns
+  social rent           -0.1616 pp  p=0.0000  ok
+
+income quintile : +0.1485 pp per step  p=0.0000  ok
+
+Model 2 — demographics + expenditure shares
+tenure effects (vs own_outright):
+  own mortgage          +0.0242 pp  p=0.1322  ns
+  private rent          -0.0443 pp  p=0.0357  ok
+  social rent           -0.0132 pp  p=0.5169  ns
+
+income quintile : -0.0042 pp per step  p=0.3361  ns
+
