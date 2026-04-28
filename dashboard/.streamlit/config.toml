@@ -1,0 +1,7 @@
+[theme]
+primaryColor = "#c41e3a"              # Editorial red - breaking news, attention
+backgroundColor = "#ffffff"           # Pure white - classic newspaper background
+secondaryBackgroundColor = "#f9f9f9"  # Off-white - subtle article sections
+textColor = "#1a1a1a"                 # Near-black - maximum readability
+linkColor = "#0066cc"                 # Editorial blue - trustworthy links
+borderColor = "#e0e0e0"               # Light gray - clean article separation   
