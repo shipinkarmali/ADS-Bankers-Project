@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Large generated data files
+# Keep the required input CSVs and compact cleaned CSVs so the README workflow can run.
+cleaned/household_inflation_dataset.csv
+
+# Trained model binaries and fitted preprocessing objects (large/regenerable)
+*.joblib
+*.pt
+
+# Heavy row-level model outputs (regenerable; keep figures, summaries, metrics, and small tables)
+**/train_processed.csv
+**/test_processed.csv
+**/train_raw.csv
+**/test_raw.csv
+**/fit_processed.csv
+**/val_processed.csv
+**/predictions_test_years.csv
